@@ -1,15 +1,10 @@
 <template>
   <v-tabs grow dark color="cyan">
+
     <v-tabs-slider color="yellow" />
-    <v-tab href="#all">
-      All
-    </v-tab>
-    <v-tab href="#lost">
-      Lost
-    </v-tab>
-    <v-tab href="#found">
-      Found
-    </v-tab>
+    <v-tab href="#all">All</v-tab>
+    <v-tab href="#lost">Lost</v-tab>
+    <v-tab href="#found">Found</v-tab>
 
     <v-tab-item
       :id="'all'"
@@ -22,18 +17,7 @@
     <v-tab-item
       :id="'lost'"
     >
-      <v-card flat>
-        <v-card-text>
-          <v-btn 
-            block 
-            flat
-            @click="toggleAddLostCard"
-          >
-            Add lost <v-icon right>add</v-icon>
-          </v-btn>
-        </v-card-text>
-      </v-card>
-      <add-lost-card v-if="addLostCardVisible"/>
+      <add-lost-card />
     </v-tab-item>
   </v-tabs>
 </template>

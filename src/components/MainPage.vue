@@ -41,9 +41,6 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
-import { map } from 'ramda'
-
 import MenuTabs from './MenuTabs'
 
 export default {
