@@ -14,4 +14,5 @@ export default {
 
 <style lang="stylus">
 @import 'vuetify/dist/vuetify.min.css';
+@import './assets/stylus/main';
 </style>
