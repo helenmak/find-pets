@@ -175,7 +175,7 @@ export default {
       this.dialog = false
     },
     toggleMapEditMode () {
-      this.mapEditMode = !this.mapEditMode
+      this.mapEditMode = true
       this.$bus.$emit('mapEditMode', this.mapEditMode)
     }
   }

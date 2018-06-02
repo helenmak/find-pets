@@ -6,10 +6,13 @@
 
 <script>
 import mapboxgl from 'mapbox-gl'
-import uuidv4 from 'uuidv4'
+import MapMarker from './MapMarker'
+import AddLostCard from './AddLostCard'
+import Vue from 'vue'
 
 export default {
   name: 'Map',
+  components: { MapMarker },
   data: () => ({
     map: null,
     editMode: true
@@ -35,20 +38,46 @@ export default {
     handleMapEvents () {
       this.map.on('click', (e) => {
         if(this.editMode) {
-          console.log(e.lngLat)
           this.addMarker(e.lngLat)
+          this.editMode = false
         }
       })
     },
-    addMarker (lngLat) {
+    async addMarker (lngLat) {
       let el = document.createElement('div')
       el.className = 'marker'
-      let popup = new mapboxgl.Popup({ offset: 25 })
-        .setText('Test')
-        console.log(lngLat.lng, lngLat.lat)
-      new mapboxgl.Marker(el)
+      el.id = 'vue'
+      console.log('this', this)
+      var starRating = new Vue({
+        ...AddLostCard,
+        parent: this,
+        propsData: { /* pass props here*/ }
+      }).$mount()
+
+      starRating.$on('someEvent', (value) => {
+        // listen to events emitted from the component
+      })
+      // var popup = new mapboxgl.Popup()
+      //       .setDOMContent(startRating.$el)
+      // const popupContent = Vue.extend({
+      //   template: '<button @click="popupClicked">Click Me!</button>',
+      //   methods: {
+      //     popupClicked() {
+      //       alert('Popup Clicked!');
+      //     },
+      //   }
+      // })
+      let popup = new mapboxgl.Popup()
         .setLngLat([lngLat.lng, lngLat.lat])
+        .setDOMContent(starRating.$el)
         .addTo(this.map)
+      
+        console.log(lngLat.lng, lngLat.lat)
+        new mapboxgl.Marker(MapMarker)
+        .setLngLat([lngLat.lng, lngLat.lat])
+        .setPopup(popup)
+        .addTo(this.map)
+      
     }
   },
   mounted () {
@@ -81,4 +110,8 @@ export default {
   height 30px
   border-radius 50%
   cursor pointer
+
+.mapboxgl-popup 
+  max-width: 400px
+  font 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif
 </style>
