@@ -12,6 +12,7 @@
   "dependencies": {
     "mapbox-gl": "^0.45.0",
     "ramda": "^0.25.0",
+    "uuidv4": "^1.0.0",
     "vue": "^2.5.2",
     "vue-router": "^3.0.1",
     "vuetify": "^1.0.18",

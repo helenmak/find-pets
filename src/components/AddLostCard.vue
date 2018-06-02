@@ -1,94 +1,130 @@
 <template>
-  <v-menu
-    :close-on-content-click="false"
-    :close-on-click="false"
-    transition="slide-x-transition"
-    right
-    offset-x
-    full-width
-  >
-    <v-card flat slot="activator">
-      <v-card-text>
-        <v-btn
-          block
-          flat
-        >
-          Add lost <v-icon right>add</v-icon>
-        </v-btn>
-      </v-card-text>
-    </v-card>
-    <v-card>
-      <form>
-        <v-select
-          :items="animals"
-          :filter="filter"
-          v-model="currentAnimal"
-          item-text="type"
-          item-value="id"
-          label="Your pet"
-          autocomplete
-        />
+  <v-layout row justify-center>
+    <v-dialog 
+      v-model="dialog" 
+      persistent 
+      max-width="500px" 
+      width="500px"
+    >
+      <v-card flat slot="activator">
+        <v-card-text>
+          <v-btn block flat @click="toggleMapEditMode">
+            Add lost <v-icon right>add</v-icon>
+          </v-btn>
+        </v-card-text>
+      </v-card>
+      <v-card>
+        <v-card-text>
+          <v-select
+            :items="animals"
+            :filter="filter"
+            v-model="currentAnimal"
+            item-text="type"
+            item-value="id"
+            label="Your pet"
+            autocomplete
+            hide-details
+          />
 
-        <v-select
-          :items="breeds[currentAnimal]"
-          :filter="filter"
-          label="Breed"
-          autocomplete
-        />
+          <v-select
+            :items="breeds[currentAnimal]"
+            :filter="filter"
+            v-model="currentBreed"
+            label="Breed"
+            autocomplete
+            hide-details
+          />
 
-        <v-text-field
-          label="Age"
-          single-line
-        />
+          <v-text-field
+            label="Age"
+            v-model.number="age"
+            hide-details
+          />
 
-        <v-select
-          :items="colors"
-          item-text="name"
-          v-model="currentColors"
-          label="Color"
-          multiple
-          chips
-          tags
-        >
-          <template slot="selection" slot-scope="data">
-            <v-chip
-              :selected="data.selected"
-              :key="data.item"
-              label
-              :color="data.item.color"
-              :text-color="data.item.name === 'black' ? 'white' : data.item.color"
-              class="chip--select-multi"
-              @input="data.parent.selectItem(data.item)"
-            >
-              {{data.item.name}}
-            </v-chip>
-          </template>
-           <template slot="item" slot-scope="data">
-            <template>
-              <v-list-tile-content>
-                <v-chip 
-                  :color="data.item.name === 'white' ? 'black' : data.item.color"
-                  :text-color="data.item.name === 'black' ? 'white' : 'black'"
-                  label
-                  :outline="data.item.name === 'white'"
-                >{{data.item.name}}</v-chip>
-              </v-list-tile-content>
+          <v-select
+            :items="colors"
+            item-text="name"
+            v-model="currentColors"
+            label="Color"
+            multiple
+            chips
+            tags
+            hide-selected
+            hide-details
+          >
+            <template slot="selection" slot-scope="data">
+              <v-chip
+                :selected="data.selected"
+                :key="data.item.name"
+                :color="data.item.name === 'white' ? 'black' : data.item.color"
+                :text-color="data.item.name === 'black' ? 'white' : 'black'"
+                label
+                :outline="data.item.name === 'white'"
+                class="chip--select-multi"
+                @input="data.parent.selectItem(data.item)"
+              >
+                {{data.item.name}}
+              </v-chip>
             </template>
-          </template>
-        </v-select>
+            <template slot="item" slot-scope="data">
+              <template>
+                <v-list-tile-content>
+                  <v-chip 
+                    :color="data.item.name === 'white' ? 'black' : data.item.color"
+                    :text-color="data.item.name === 'black' ? 'white' : 'black'"
+                    label
+                    :outline="data.item.name === 'white'"
+                  >{{data.item.name}}</v-chip>
+                </v-list-tile-content>
+              </template>
+            </template>
+          </v-select>
 
-      </form>
-    </v-card>
-  </v-menu>
+          <v-text-field
+            label="Contacts" 
+            multi-line
+            rows="2"
+            auto-grow
+            v-model="contacts"
+            hide-details
+          />
+
+          <v-flex d-flex class="mt-1">
+            <image-preview :image="photoUrl"/>
+            <v-text-field
+              label="Your pet photo"
+              hint="Paste here photo url"
+              v-model="photoUrl"
+            />
+          </v-flex>
+        </v-card-text>
+
+
+        <v-card-actions>
+          <v-spacer />
+          <v-btn color="blue darken-1" flat @click.native="closeDialog">Close</v-btn>
+          <v-btn color="blue darken-1" flat @click.native="closeDialog">Save</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </v-layout>
 </template>
 
 <script>
+import ImagePreview from './ImagePreview'
+
 export default {
   name: "AddLostCard",
+  components: { ImagePreview },
   data: () => ({
-    fotoUrl: null,
+    dialog: false,
+    mapEditMode: false,
     currentAnimal: '',
+    currentBreed: '',
+    contacts: '',
+    age: '',
     currentColors: [],
+    photoUrl: '',
     animals: [
       { type: 'Dog', id: 'dog' },
       { type: 'Cat', id: 'cat' },
@@ -134,6 +170,13 @@ export default {
       const queryText = hasValue(query)
       const format = item => item.toString().toLowerCase()
       return format(text).indexOf(format(queryText)) > -1
+    },
+    closeDialog () {
+      this.dialog = false
+    },
+    toggleMapEditMode () {
+      this.mapEditMode = !this.mapEditMode
+      this.$bus.$emit('mapEditMode', this.mapEditMode)
     }
   }
 }

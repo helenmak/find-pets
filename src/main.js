@@ -4,13 +4,7 @@ import Vue from 'vue'
 import Vuetify from 'vuetify'
 import App from './App'
 import router from './router'
-
-const eventBus = new Vue({})
-Object.defineProperty(Vue.prototype, '$bus', {
-  get () {
-    return this.$root.eventBus
-  }
-})
+import eventBus from './plugins/eventBus'
 
 Vue.config.productionTip = false
 
@@ -19,6 +13,9 @@ Vue.use(Vuetify)
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
+  data: {
+    eventBus
+  },
   router,
   components: { App },
   template: '<App/>'
