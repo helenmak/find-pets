@@ -17,24 +17,68 @@
         </v-btn>
       </v-card-text>
     </v-card>
-    <form>
-      <v-select
-        :items="animals"
-        :filter="filterPets"
-        v-model="currentAnimal"
-        item-text="type"
-        item-value="id"
-        label="Your pet"
-        autocomplete
-      />
+    <v-card>
+      <form>
+        <v-select
+          :items="animals"
+          :filter="filter"
+          v-model="currentAnimal"
+          item-text="type"
+          item-value="id"
+          label="Your pet"
+          autocomplete
+        />
 
-      <v-select
-        :items="breeds[currentAnimal]"
-        :filter="filterPets"
-        label="Breed"
-        autocomplete
-      />
-    </form>
+        <v-select
+          :items="breeds[currentAnimal]"
+          :filter="filter"
+          label="Breed"
+          autocomplete
+        />
+
+        <v-text-field
+          label="Age"
+          single-line
+        />
+
+        <v-select
+          :items="colors"
+          item-text="name"
+          v-model="currentColors"
+          label="Color"
+          multiple
+          chips
+          tags
+        >
+          <template slot="selection" slot-scope="data">
+            <v-chip
+              :selected="data.selected"
+              :key="data.item"
+              label
+              :color="data.item.color"
+              :text-color="data.item.name === 'black' ? 'white' : data.item.color"
+              class="chip--select-multi"
+              @input="data.parent.selectItem(data.item)"
+            >
+              {{data.item.name}}
+            </v-chip>
+          </template>
+           <template slot="item" slot-scope="data">
+            <template>
+              <v-list-tile-content>
+                <v-chip 
+                  :color="data.item.name === 'white' ? 'black' : data.item.color"
+                  :text-color="data.item.name === 'black' ? 'white' : 'black'"
+                  label
+                  :outline="data.item.name === 'white'"
+                >{{data.item.name}}</v-chip>
+              </v-list-tile-content>
+            </template>
+          </template>
+        </v-select>
+
+      </form>
+    </v-card>
   </v-menu>
 </template>
 
@@ -44,6 +88,7 @@ export default {
   data: () => ({
     fotoUrl: null,
     currentAnimal: '',
+    currentColors: [],
     animals: [
       { type: 'Dog', id: 'dog' },
       { type: 'Cat', id: 'cat' },
@@ -67,22 +112,37 @@ export default {
       pig: ['American Yorkshire', 'Danish Protest', 'Göttingen minipig', 'Red Wattle', 'Tamworth', 'Wessex Saddleback'],
       hamster: ['Syrian', 'Dwarf Campbell Russian', 'Dwarf Winter White Russian', 'Roborovski Dwarf', 'Chinese'],
       rat: ['Standard', 'Manx', 'Bald', 'Dumbo', 'Rex']
-    }
+    },
+    colors: [
+      { name: 'black', color: 'black' },
+      { name: 'red', color: 'red' },
+      { name: 'white', color: 'white' },
+      { name: 'grey', color: 'grey' },
+      { name: 'blue', color: 'blue' },
+      { name: 'yellow', color: 'yellow' },
+      { name: 'lightblue', color: '#add8e6' },
+      { name: 'green', color: 'green' },
+      { name: 'pink', color: 'pink' },
+      { name: 'orange', color: 'orange' },
+      { name: 'brown', color: 'brown' }
+    ]
   }),
   methods: {
-    filterPets (item, queryText) {
+    filter (itemObj, query, itemText) {
       const hasValue = val => val != null ? val : ''
-      const text = hasValue(item.type)
-      const query = hasValue(queryText)
-      return text.toString()
-        .toLowerCase()
-        .indexOf(query.toString().toLowerCase()) > -1
+      const text = hasValue(itemText)
+      const queryText = hasValue(query)
+      const format = item => item.toString().toLowerCase()
+      return format(text).indexOf(format(queryText)) > -1
     }
   }
 }
 </script>
 
 <style lang="stylus" scoped>
+.add-lost--list-item
+  border 1px solid black
+  border-radius 50%
 
 </style>
 
