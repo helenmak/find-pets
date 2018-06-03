@@ -5,6 +5,8 @@ import Vuetify from 'vuetify'
 import App from './App'
 import router from './router'
 import eventBus from './plugins/eventBus'
+import store from './store'
+
 
 Vue.config.productionTip = false
 
@@ -17,6 +19,7 @@ new Vue({
     eventBus
   },
   router,
+  store,
   components: { App },
   template: '<App/>'
 })
