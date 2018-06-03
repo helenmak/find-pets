@@ -22,7 +22,6 @@ export default {
     ...mapGetters(['getPets'])
   },
   methods: {
-    ...mapActions(['removePet']),
     initMap () {
       mapboxgl.accessToken = 'pk.eyJ1IjoiZWxlbmFtYWsiLCJhIjoiY2poczNpOTFwNTYyNzMwbmdhZzF0bndnOCJ9.DHp-ze62avwVbkt0yIUeZA'
       this.map = new mapboxgl.Map({

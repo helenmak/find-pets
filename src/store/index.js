@@ -18,19 +18,12 @@ export const getters = {
 const actions = {
   addPet ({commit}, petData) {
     commit("ADD_PET", petData)
-  },
-  removePet ({commit}, id) {
-    commit("REMOVE_PET", id)
   }
 }
 
 export const mutations = {
   "ADD_PET" (state, data) {
     state.pets[data.id] = data
-    localStorage.setItem('pets', JSON.stringify(state.pets))
-  },
-  "REMOVE_PET" (state, id) {
-    state.pets = omit([id], state.pets)
     localStorage.setItem('pets', JSON.stringify(state.pets))
   }
 }
