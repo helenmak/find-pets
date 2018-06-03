@@ -9,20 +9,23 @@ import mapboxgl from 'mapbox-gl'
 import PopupPetCard from './PopupPetCard'
 import Vue from 'vue'
 import { mapActions, mapGetters } from 'vuex'
-import { clone, omit, mapObjIndexed, filter, whereEq, keys, findIndex, equals, not } from 'ramda'
+import { clone, omit, mapObjIndexed, filter, whereEq, keys, findIndex, equals, not, prop } from 'ramda'
 import uuidv4 from 'uuidv4'
+import turf from 'turf/distance'
 
 export default {
   name: 'Map',
   data: () => ({
     map: null,
     editMode: false,
-    markers: {}
+    markers: {},
+    measureMode: false
   }),
   computed: {
     ...mapGetters(['getPets'])
   },
   methods: {
+    ...mapActions(['removePet']),
     initMap () {
       mapboxgl.accessToken = 'pk.eyJ1IjoiZWxlbmFtYWsiLCJhIjoiY2poczNpOTFwNTYyNzMwbmdhZzF0bndnOCJ9.DHp-ze62avwVbkt0yIUeZA'
       this.map = new mapboxgl.Map({
@@ -45,12 +48,26 @@ export default {
         if(this.editMode) {
           this.addMarker(e.lngLat, this.editMode)
           this.editMode = false
+        } else if(this.measureMode) {
+          console.log(e.lngLat)
+          const from = turf.point([e.lngLat.lng, e.lngLat.lat])
+          const markersInRadius = []
+          for(let markerId in this.markers) {
+            const lngLat = this.markers[markerId].marker.getLngLat
+            const to = [lngLat.lng, lngLAt.lat]
+            const distance = turf.distance(from, to)
+            if(distance > this.radius) return
+            markersInRadius.push({ id: markerId, query: this.markers[markerId].)
+          }
+          markersInRadius.reduce((acc, id) => {
+            
+          }, [])
         }
       })
     },
     addMarker (lngLat, markerType, petData) {
       const popupCard = clone(PopupPetCard)
-      const id = petData.id || uuidv4()
+      const id = prop('id', petData) || uuidv4()
       const popupPetCard = new Vue({
         ...popupCard,
         parent: this,
@@ -108,11 +125,14 @@ export default {
     this.$bus.$on('removeMarker', (id) => {
       this.markers[id].marker.remove()
       this.markers = omit([id], this.markers)
-      // remove from store
     })
     if(this.getPets) this.renderPets(this.getPets)
     this.$bus.$on('searchPets', searchQuery => {
       if(this.getPets) this.filterPets(this.getPets, searchQuery)
+    })
+    this.$bus.$on('mapMeasureMode', ({ mode, radius }) => {
+      this.measureMode = mode
+      this.radius = radius
     })
   },
   beforeDestroy () {

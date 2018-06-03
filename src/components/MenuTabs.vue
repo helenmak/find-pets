@@ -6,24 +6,23 @@
     <v-tab href="#lost">Lost</v-tab>
     <v-tab href="#found">Found</v-tab>
 
-    <v-tab-item
-      :id="'all'"
-    >
+    <v-tab-item :id="'all'">
       <find-pet-card/>
+      <v-btn @click="toggleMapMeasureMode">Find by radius</v-btn>
+      <v-text-field 
+        v-model="radius"
+        label="Radius"
+      />
     </v-tab-item>
 
-    <v-tab-item
-      :id="'lost'"
-    >
+    <v-tab-item :id="'lost'">
       <find-pet-card type="lost"/>
-      <!-- <add-pet-card /> -->
     </v-tab-item>
-    <v-tab-item
-      :id="'found'"
-    >
+
+    <v-tab-item :id="'found'">
       <find-pet-card type="found"/>
-      <!-- <add-pet-card /> -->
     </v-tab-item>
+
   </v-tabs>
 </template>
 
@@ -38,8 +37,8 @@ export default {
     addLostCardVisible: false
   }),
   methods: {
-    toggleAddLostCard(){
-      this.addLostCardVisible = !this.addLostCardVisible
+    toggleMapMeasureMode () {
+      this.$bus.$emit('mapMeasureMode', { mode: true, radius })
     }
   }
 }
