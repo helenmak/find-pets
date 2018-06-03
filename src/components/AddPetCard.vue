@@ -1,18 +1,10 @@
 <template>
   <v-layout row justify-center>
     <v-card 
-      v-model="dialog" 
       persistent 
       max-width="500px" 
       width="500px"
     >
-      <!-- <v-card flat slot="activator">
-        <v-card-text>
-          <v-btn block flat>
-            Add lost <v-icon right>add</v-icon>
-          </v-btn>
-        </v-card-text>
-      </v-card> -->
       <v-card>
         <v-card-text>
           <v-select
@@ -118,7 +110,6 @@ export default {
     id: ''
   },
   data: () => ({
-    dialog: false,
     searchAnimal: '',
     searchBreed: '',
     currentAnimal: '',
@@ -174,7 +165,6 @@ export default {
       return format(text).indexOf(format(queryText)) > -1
     },
     cancelPet () {
-      this.dialog = false
       this.$bus.$emit('removeMarker', this.id)
     },
     savePet () {
