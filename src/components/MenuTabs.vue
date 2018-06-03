@@ -17,17 +17,25 @@
     <v-tab-item
       :id="'lost'"
     >
-      <add-lost-card />
+      <find-pet-card type="lost"/>
+      <!-- <add-pet-card /> -->
+    </v-tab-item>
+    <v-tab-item
+      :id="'found'"
+    >
+      <find-pet-card type="found"/>
+      <!-- <add-pet-card /> -->
     </v-tab-item>
   </v-tabs>
 </template>
 
 <script>
-import AddLostCard from './AddLostCard'
+import AddPetCard from './AddPetCard'
+import FindPetCard from './FindPetCard'
 
 export default {
   name: 'MenuTabs',
-  components: { AddLostCard },
+  components: { AddPetCard, FindPetCard },
   data: () => ({
     addLostCardVisible: false
   }),

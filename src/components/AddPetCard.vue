@@ -1,34 +1,35 @@
 <template>
   <v-layout row justify-center>
-    <v-dialog 
+    <v-card 
       v-model="dialog" 
       persistent 
       max-width="500px" 
       width="500px"
     >
-      <v-card flat slot="activator">
+      <!-- <v-card flat slot="activator">
         <v-card-text>
-          <v-btn block flat @click="toggleMapEditMode">
+          <v-btn block flat>
             Add lost <v-icon right>add</v-icon>
           </v-btn>
         </v-card-text>
-      </v-card>
+      </v-card> -->
       <v-card>
         <v-card-text>
           <v-select
             :items="animals"
             :filter="filter"
             v-model="currentAnimal"
+            :search-input.sync="searchAnimal"
             item-text="type"
-            item-value="id"
             label="Your pet"
             autocomplete
             hide-details
           />
 
           <v-select
-            :items="breeds[currentAnimal]"
+            :items="breeds[currentAnimal.id]"
             :filter="filter"
+            :search-input.sync="searchBreed"
             v-model="currentBreed"
             label="Breed"
             autocomplete
@@ -63,7 +64,7 @@
                 class="chip--select-multi"
                 @input="data.parent.selectItem(data.item)"
               >
-                {{data.item.name}}
+                {{data.item.name || data.item}}
               </v-chip>
             </template>
             <template slot="item" slot-scope="data">
@@ -74,7 +75,7 @@
                     :text-color="data.item.name === 'black' ? 'white' : 'black'"
                     label
                     :outline="data.item.name === 'white'"
-                  >{{data.item.name}}</v-chip>
+                  >{{data.item.name || data.item}}</v-chip>
                 </v-list-tile-content>
               </template>
             </template>
@@ -99,14 +100,13 @@
           </v-flex>
         </v-card-text>
 
-
         <v-card-actions>
           <v-spacer />
-          <v-btn color="blue darken-1" flat @click.native="closeDialog">Close</v-btn>
+          <v-btn color="blue darken-1" flat @click.native="cancelPet">Cancel</v-btn>
           <v-btn color="blue darken-1" flat @click.native="savePet">Save</v-btn>
         </v-card-actions>
       </v-card>
-    </v-dialog>
+    </v-card>
   </v-layout>
 </template>
 
@@ -116,9 +116,13 @@ import ImagePreview from './ImagePreview'
 export default {
   name: "AddLostCard",
   components: { ImagePreview },
+  props: {
+    id: ''
+  },
   data: () => ({
     dialog: false,
-    mapEditMode: false,
+    searchAnimal: '',
+    searchBreed: '',
     currentAnimal: '',
     currentBreed: '',
     contacts: '',
@@ -163,6 +167,13 @@ export default {
       { name: 'brown', color: 'brown' }
     ]
   }),
+  watch: {
+    searchAnimal (val) {
+      console.log(val)
+    },
+    searchBreed (val) {
+    }
+  },
   methods: {
     filter (itemObj, query, itemText) {
       const hasValue = val => val != null ? val : ''
@@ -171,15 +182,22 @@ export default {
       const format = item => item.toString().toLowerCase()
       return format(text).indexOf(format(queryText)) > -1
     },
-    closeDialog () {
+    cancelPet () {
       this.dialog = false
+      this.$bus.$emit('removeMarker', this.id)
     },
     savePet () {
-      
-    },
-    toggleMapEditMode () {
-      this.mapEditMode = true
-      this.$bus.$emit('mapEditMode', this.mapEditMode)
+      const colors = this.currentColors.map(color => color.name || color)
+      const animal = this.currentAnimal.type
+      const petData = {
+        animal,
+        breed: this.currentBreed,
+        age: this.age,
+        photo: this.photoUrl,
+        colors,
+        contacts: this.contacts
+      }
+      this.$emit('savePet', petData)
     }
   }
 }
@@ -189,6 +207,4 @@ export default {
 .add-lost--list-item
   border 1px solid black
   border-radius 50%
-
 </style>
-

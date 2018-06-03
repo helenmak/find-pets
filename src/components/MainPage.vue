@@ -8,6 +8,7 @@
       value="drawer"
       width="350"
       light
+      permanent
       class="deep-purple lighten-5 elevation-5"
       mini-variant-width="65"
     >
@@ -32,6 +33,8 @@
     <v-content class="layout">
         <v-layout justify-center align-center fill-height>
           <v-flex fill-height>
+            <map-control-button text="Add lost pet" className="control-lost" type="lost"/>
+            <map-control-button text="Add found pet" className="control-found" type="found"/>
             <router-view />
           </v-flex>
         </v-layout>
@@ -42,29 +45,16 @@
 
 <script>
 import MenuTabs from './MenuTabs'
+import MapControlButton from './MapControlButton'
 
 export default {
   name: 'MainPage',
-  components: { MenuTabs },
+  components: { MenuTabs, MapControlButton },
   data: () => ({
     drawer: true,
     drawerRight: true,
     right: null,
-    left: null,
-    items: [
-      { icon: 'format_list_bulleted',
-        title: 'All',
-        model: false
-      },
-      { icon: 'library_add',
-        title: 'Lost',
-        model: false
-      },
-      { icon: 'library_add',
-        title: 'Found',
-        model: false
-      }
-    ]
+    left: null
   }),
   methods: {
     toggleDrawer(){
@@ -75,7 +65,8 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-.layout, .main__wrapper
+.layout
+.main__wrapper
   height 100%
-
+  position relative
 </style>

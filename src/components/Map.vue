@@ -6,16 +6,18 @@
 
 <script>
 import mapboxgl from 'mapbox-gl'
-import MapMarker from './MapMarker'
-import AddLostCard from './AddLostCard'
+import PopupPetCard from './PopupPetCard'
+import CustomMapControl from './CustomMapControl'
 import Vue from 'vue'
+import { clone } from 'ramda'
+import uuidv4 from 'uuidv4'
 
 export default {
   name: 'Map',
-  components: { MapMarker },
   data: () => ({
     map: null,
-    editMode: true
+    editMode: false,
+    markers: {}
   }),
   methods: {
     initMap () {
@@ -38,34 +40,30 @@ export default {
     handleMapEvents () {
       this.map.on('click', (e) => {
         if(this.editMode) {
-          this.addMarker(e.lngLat)
+          this.addMarker(e.lngLat, this.editMode)
           this.editMode = false
         }
       })
     },
-    async addMarker (lngLat) {
-      let el = document.createElement('div')
-      el.className = 'marker'
-
-      var addPetCard = new Vue({
-        ...AddLostCard,
+    addMarker (lngLat, markerType) {
+      const popupCard = clone(PopupPetCard)
+      const id = uuidv4()
+      const popupPetCard = new Vue({
+        ...popupCard,
         parent: this,
-        propsData: { /* pass props here*/ }
+        propsData: { lngLat, id }
       }).$mount()
-      addPetCard.$on('someEvent', (value) => {
-        // listen to events emitted from the component
-      })
       let popup = new mapboxgl.Popup({ closeOnClick: false, closeButton: true })
         .setLngLat([lngLat.lng, lngLat.lat])
-        .setDOMContent(addPetCard.$el)
+        .setDOMContent(popupPetCard.$el)
         .addTo(this.map)
-      
-        new mapboxgl.Marker(el)
+
+      const markerColor = markerType === 'lost' ? 'red' : ''    
+      this.markers[id] = new mapboxgl.Marker({color: markerColor})
         .setLngLat([lngLat.lng, lngLat.lat])
         .setPopup(popup)
         .addTo(this.map)
         .togglePopup()
-      
     }
   },
   mounted () {
@@ -73,6 +71,9 @@ export default {
     this.initMap()
     this.addControls()
     this.handleMapEvents()
+    this.$bus.$on('removeMarker', (id) => {
+      this.markers[id].remove()
+    })
   },
   beforeDestroy () {
     this.$bus.$off('mapEditMode')
@@ -84,22 +85,14 @@ export default {
 #map
   display flex
   flex-grow 1
-  width 100%
-  border red
   height 100%
+  width calc(100% - 65px)
   position absolute
   top 0
-  bottom 0
-
-.marker 
-  background-image url('./marker.svg')
-  background-size cover
-  width 30px
-  height 30px
-  border-radius 50%
-  cursor pointer
+  left 65px
 
 .mapboxgl-popup 
   max-width: 400px
   font 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif
+
 </style>
