@@ -3,33 +3,21 @@
     <v-card-media v-if="photo" :src="photo" height="200px"/>
     <v-card-title>
       <div>
-        <h3 class="headline mb-0">{{animal, breed}}</h3>
-        <v-list>
-          <v-list-tile>
-            <v-list-tile-action>
-              Age
-            </v-list-tile-action>
-            <v-list-content>
+        <h4 class="headline mb-0">{{animal}}, {{breed}}</h4>
+        <ul>
+          <li>
+              Age:
               {{age}}
-            </v-list-content>
-          </v-list-tile>
-          <v-list-tile>
-            <v-list-tile-action>
-              Colors
-            </v-list-tile-action>
-            <v-list-content>
-              {{colors}}
-            </v-list-content>
-          </v-list-tile>
-          <v-list-tile>
-            <v-list-tile-action>
-              Contacts
-            </v-list-tile-action>
-            <v-list-content>
+          </li>
+          <li>
+              Colors:
+              {{colors.join(', ')}}
+          </li>
+          <li>
+              Contacts:
               {{contacts}}
-            </v-list-content>
-          </v-list-tile>
-        </v-list>
+          </li>
+        </ul>
       </div>
     </v-card-title>
   </v-card>
@@ -39,24 +27,12 @@
 export default {
   name: "PetCard",
   props: {
-    animal: {
-      type: String,
-    },
-    breed: {
-      type: String,
-    },
-    age: {
-      type: Number,
-    },
-    colors: {
-      type: Array,
-    },
-    contacts: {
-      type: String,
-    },
-    photo: {
-      type: String,
-    },
+    animal: '',
+    breed: '',
+    age: '',
+    contacts: '',
+    colors: null,
+    photo: ''
   }
 }
 </script>
