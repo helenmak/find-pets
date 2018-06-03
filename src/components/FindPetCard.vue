@@ -14,15 +14,17 @@
             v-model="currentAnimal"
             item-text="type"
             label="Pet type"
+            clearable
             autocomplete
             hide-details
           />
 
           <v-select
-            :items="breeds[currentAnimal.id]"
+            :items="prop(path(['id'], currentAnimal), breeds)"
             :filter="filter"
             v-model="currentBreed"
             label="Breed"
+            clearable
             autocomplete
             hide-details
           />
@@ -38,6 +40,7 @@
             item-text="name"
             v-model="currentColors"
             label="Color"
+            clearable
             multiple
             chips
             tags
@@ -55,7 +58,7 @@
                 class="chip--select-multi"
                 @input="data.parent.selectItem(data.item)"
               >
-                {{data.item}}
+                {{data.item.name}}
               </v-chip>
             </template>
             <template slot="item" slot-scope="data">
@@ -66,7 +69,7 @@
                     :text-color="data.item.name === 'black' ? 'white' : 'black'"
                     label
                     :outline="data.item.name === 'white'"
-                  >{{data.item}}</v-chip>
+                  >{{data.item.name}}</v-chip>
                 </v-list-tile-content>
               </template>
             </template>
@@ -75,8 +78,8 @@
 
         <v-card-actions>
           <v-spacer />
-          <v-btn color="blue darken-1" flat @click.native="cancelPet">Reset filters</v-btn>
-          <v-btn color="blue darken-1" flat @click.native="savePet">Find</v-btn>
+          <v-btn color="blue darken-1" flat @click.native="resetFilters">Reset filters</v-btn>
+          <v-btn color="blue darken-1" flat @click.native="findPets">Find</v-btn>
         </v-card-actions>
       </v-card>
     </v-card>
@@ -85,12 +88,14 @@
 
 <script>
 import ImagePreview from './ImagePreview'
+import { filter, not, or, isNil, isEmpty, path, prop } from 'ramda'
 
 export default {
   name: "FindPetCard",
   components: { ImagePreview },
   props: {
-    id: ''
+    id: '',
+    type: ''
   },
   data: () => ({
     dialog: false,
@@ -139,6 +144,8 @@ export default {
     ]
   }),
   methods: {
+    path,
+    prop,
     filter (itemObj, query, itemText) {
       const hasValue = val => val != null ? val : ''
       const text = hasValue(itemText)
@@ -146,29 +153,25 @@ export default {
       const format = item => item.toString().toLowerCase()
       return format(text).indexOf(format(queryText)) > -1
     },
-    cancelPet () {
-      this.dialog = false
-      this.$bus.$emit('removeMarker', this.id)
+    resetFilters () {
+      this.currentAnimal = ''
+      this.currentBreed = ''
+      this.age = ''
+      this.colors = []
     },
-    savePet () {
+    findPets () {
       const colors = this.currentColors.map(color => color.name)
-      const animal = this.currentAnimal.type
-      const petData = {
+      const animal = path(['type'], this.currentAnimal)
+      const searchFields = {
         animal,
         breed: this.currentBreed,
         age: this.age,
-        photo: this.photoUrl,
         colors,
-        contacts: this.contacts
+        status: this.type
       }
-      this.$emit('savePet', petData)
+      const searchQuery = filter(search => not(or(isNil(search), isEmpty(search))), searchFields)
+      this.$bus.$emit('searchPets', searchQuery)
     }
   }
 }
 </script>
-
-<style lang="stylus" scoped>
-.add-lost--list-item
-  border 1px solid black
-  border-radius 50%
-</style>

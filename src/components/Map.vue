@@ -7,9 +7,9 @@
 <script>
 import mapboxgl from 'mapbox-gl'
 import PopupPetCard from './PopupPetCard'
-import CustomMapControl from './CustomMapControl'
 import Vue from 'vue'
-import { clone } from 'ramda'
+import { mapActions, mapGetters } from 'vuex'
+import { clone, omit, mapObjIndexed, filter, whereEq, keys, findIndex, equals, not } from 'ramda'
 import uuidv4 from 'uuidv4'
 
 export default {
@@ -19,6 +19,9 @@ export default {
     editMode: false,
     markers: {}
   }),
+  computed: {
+    ...mapGetters(['getPets'])
+  },
   methods: {
     initMap () {
       mapboxgl.accessToken = 'pk.eyJ1IjoiZWxlbmFtYWsiLCJhIjoiY2poczNpOTFwNTYyNzMwbmdhZzF0bndnOCJ9.DHp-ze62avwVbkt0yIUeZA'
@@ -45,13 +48,13 @@ export default {
         }
       })
     },
-    addMarker (lngLat, markerType) {
+    addMarker (lngLat, markerType, petData) {
       const popupCard = clone(PopupPetCard)
-      const id = uuidv4()
+      const id = petData.id || uuidv4()
       const popupPetCard = new Vue({
         ...popupCard,
         parent: this,
-        propsData: { lngLat, id }
+        propsData: { lngLat, id, status: markerType, petData }
       }).$mount()
       let popup = new mapboxgl.Popup({ closeOnClick: false, closeButton: true })
         .setLngLat([lngLat.lng, lngLat.lat])
@@ -59,11 +62,42 @@ export default {
         .addTo(this.map)
 
       const markerColor = markerType === 'lost' ? 'red' : ''    
-      this.markers[id] = new mapboxgl.Marker({color: markerColor})
+      this.markers[id] = {
+        marker: new mapboxgl.Marker({color: markerColor}),
+        type: markerType,
+        onMap: true
+      }
+      this.markers[id].marker
         .setLngLat([lngLat.lng, lngLat.lat])
         .setPopup(popup)
         .addTo(this.map)
-        .togglePopup()
+      if(!petData) this.markers[id].marker.togglePopup()
+    },
+    renderPets (pets) {
+      const renderData = petData => {
+        const lngLat = petData.lngLat
+        const markerType = petData.status
+        this.addMarker(lngLat, markerType, petData)
+      }
+      mapObjIndexed(renderData, pets)
+    },
+    filterPets (pets, searchQuery) {
+      const filterObj = item => whereEq(searchQuery, item)
+      const petsToRender = filter(filterObj, pets)
+      const idsToRender = keys(petsToRender)   
+      for(let markerId in this.markers){
+        if(equals(findIndex(petId => equals(petId, markerId), idsToRender), -1)){
+          if(this.markers[markerId].onMap) {
+            this.markers[markerId].marker.remove()
+            this.markers[markerId].onMap = false
+          }
+        } else {
+          if(not(this.markers[markerId].onMap)) {
+            this.markers[markerId].marker.addTo(this.map)
+            this.markers[markerId].onMap = true
+          }
+        }
+      }
     }
   },
   mounted () {
@@ -72,11 +106,18 @@ export default {
     this.addControls()
     this.handleMapEvents()
     this.$bus.$on('removeMarker', (id) => {
-      this.markers[id].remove()
+      this.markers[id].marker.remove()
+      this.markers = omit([id], this.markers)
+      // remove from store
+    })
+    if(this.getPets) this.renderPets(this.getPets)
+    this.$bus.$on('searchPets', searchQuery => {
+      if(this.getPets) this.filterPets(this.getPets, searchQuery)
     })
   },
   beforeDestroy () {
     this.$bus.$off('mapEditMode')
+    this.$bus.$off('removeMarker')
   }
 }
 </script>
@@ -94,5 +135,4 @@ export default {
 .mapboxgl-popup 
   max-width: 400px
   font 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif
-
 </style>

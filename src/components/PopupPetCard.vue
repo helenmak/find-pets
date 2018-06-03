@@ -25,7 +25,13 @@ export default {
       type: Object
     },
     id: {
+      type: [String, Number]
+    },
+    status: {
       type: String
+    },
+    petData: {
+      type: Object
     }
   },
   data: {
@@ -33,15 +39,22 @@ export default {
     pet: null
   },
   methods: {
-    ...mapActions(['addLostPet']),
-    saveNewPet (petData) {
+    ...mapActions(['addPet']),
+    saveNewPet (pet) {
       this.pet = {
-        ...petData, 
+        ...pet, 
         id: this.id, 
-        lngLat: [this.lngLat.lng, this.lngLat.lat]
+        lngLat: this.lngLat,
+        status: this.status
       }
-      this.addLostPet(this.pet)
+      this.addPet(this.pet)
       this.addMode = false
+    }
+  },
+  mounted () {
+    if(this.petData){
+      this.addMode = false
+      this.pet = this.petData
     }
   }
 }

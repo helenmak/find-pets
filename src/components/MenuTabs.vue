@@ -9,9 +9,7 @@
     <v-tab-item
       :id="'all'"
     >
-      <v-card flat>
-        <v-card-text>All</v-card-text>
-      </v-card>
+      <find-pet-card/>
     </v-tab-item>
 
     <v-tab-item
