@@ -103,7 +103,7 @@
         <v-card-actions>
           <v-spacer />
           <v-btn color="blue darken-1" flat @click.native="closeDialog">Close</v-btn>
-          <v-btn color="blue darken-1" flat @click.native="closeDialog">Save</v-btn>
+          <v-btn color="blue darken-1" flat @click.native="savePet">Save</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -173,6 +173,9 @@ export default {
     },
     closeDialog () {
       this.dialog = false
+    },
+    savePet () {
+      
     },
     toggleMapEditMode () {
       this.mapEditMode = true

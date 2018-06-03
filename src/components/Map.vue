@@ -46,37 +46,25 @@ export default {
     async addMarker (lngLat) {
       let el = document.createElement('div')
       el.className = 'marker'
-      el.id = 'vue'
-      console.log('this', this)
-      var starRating = new Vue({
+
+      var addPetCard = new Vue({
         ...AddLostCard,
         parent: this,
         propsData: { /* pass props here*/ }
       }).$mount()
-
-      starRating.$on('someEvent', (value) => {
+      addPetCard.$on('someEvent', (value) => {
         // listen to events emitted from the component
       })
-      // var popup = new mapboxgl.Popup()
-      //       .setDOMContent(startRating.$el)
-      // const popupContent = Vue.extend({
-      //   template: '<button @click="popupClicked">Click Me!</button>',
-      //   methods: {
-      //     popupClicked() {
-      //       alert('Popup Clicked!');
-      //     },
-      //   }
-      // })
-      let popup = new mapboxgl.Popup()
+      let popup = new mapboxgl.Popup({ closeOnClick: false, closeButton: true })
         .setLngLat([lngLat.lng, lngLat.lat])
-        .setDOMContent(starRating.$el)
+        .setDOMContent(addPetCard.$el)
         .addTo(this.map)
       
-        console.log(lngLat.lng, lngLat.lat)
-        new mapboxgl.Marker(MapMarker)
+        new mapboxgl.Marker(el)
         .setLngLat([lngLat.lng, lngLat.lat])
         .setPopup(popup)
         .addTo(this.map)
+        .togglePopup()
       
     }
   },
