@@ -1,10 +1,10 @@
 <template>
   <v-btn 
-    outline 
+    outline
     @click="enterMapEditMode" 
     :class="className"
   >
-  {{text}}
+  {{btnText}}
   </v-btn>
 </template>
 
@@ -16,28 +16,36 @@ export default {
     className: '',
     type: ''
   },
+  data: () => ({
+    btnText: ''
+  }),
   methods: {
     enterMapEditMode () {
+      this.btnText = 'Now choose place'
       this.$bus.$emit('mapEditMode', this.type)
     }
+  },
+  mounted () {
+    this.btnText = this.text
+    this.$bus.$on('resetControlBtnText', () => this.btnText = this.text)
+  },
+  beforeDestroy () {
+    this.$bus.$off('resetControlBtnText')
   }
 }
 </script>
 
 <style lang="stylus">
 .control-lost
-  color black
-  background blue
   border-radius 4px
   position absolute
   z-index 1
   right 300px
   margin 8px
   width 200px
+  font-weight 600
 
 .control-found
-  color white
-  background #000
   border-radius 4px
   position absolute
   z-index 1
@@ -45,5 +53,6 @@ export default {
   right 50px
   margin 8px
   width 200px
+  font-weight 600
 </style>
 

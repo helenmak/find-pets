@@ -1,21 +1,29 @@
-# tabs_editor
+# SircoSearch v.1.0.0
 
-> A Vue.js project
+> made with Vue.js and stylus
+
+Current app version doesn`t support 'radius search', but I work on it :).
+
+To add new lost or found pet click on corresponding map control.
+Then you have to point place where you lost or found an animal.
+Fill in opened form and press 'Save' to save data or 'Cancel' to delete marker.
+
+You can find any animal in already added data - on sidebar navigation menu choose type of animal you want
+to find (all, lost or found), fill one or more of criterias and press 'Find'.
+
+Pet data will be saved in your local storage.
 
 ## Build Setup
 
-``` bash
 # install dependencies
-npm install
+npm i
 
-# serve with hot reload at localhost:8080
+# run server at localhost:3000 (will automatically open browser)
 npm run dev
 
-# build for production with minification
+# build for production
 npm run build
 
 # build for production and view the bundle analyzer report
 npm run build --report
 ```
-
-For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).

@@ -1,7 +1,5 @@
 <template>
-  <section id="map">
-
-  </section>
+  <section id="map" />
 </template>
 
 <script>
@@ -11,7 +9,6 @@ import Vue from 'vue'
 import { mapActions, mapGetters } from 'vuex'
 import { clone, omit, mapObjIndexed, filter, whereEq, keys, findIndex, equals, not, prop } from 'ramda'
 import uuidv4 from 'uuidv4'
-import turf from 'turf/distance'
 
 export default {
   name: 'Map',
@@ -47,21 +44,10 @@ export default {
       this.map.on('click', (e) => {
         if(this.editMode) {
           this.addMarker(e.lngLat, this.editMode)
+          const newCenter = [e.lngLat.lng + 0.01, e.lngLat.lat - 0.14]
+          this.map.setCenter(newCenter)
           this.editMode = false
-        } else if(this.measureMode) {
-          console.log(e.lngLat)
-          const from = turf.point([e.lngLat.lng, e.lngLat.lat])
-          const markersInRadius = []
-          for(let markerId in this.markers) {
-            const lngLat = this.markers[markerId].marker.getLngLat
-            const to = [lngLat.lng, lngLAt.lat]
-            const distance = turf.distance(from, to)
-            if(distance > this.radius) return
-            markersInRadius.push({ id: markerId, query: this.markers[markerId].)
-          }
-          markersInRadius.reduce((acc, id) => {
-            
-          }, [])
+          this.$bus.$emit('resetControlBtnText')
         }
       })
     },
@@ -130,14 +116,11 @@ export default {
     this.$bus.$on('searchPets', searchQuery => {
       if(this.getPets) this.filterPets(this.getPets, searchQuery)
     })
-    this.$bus.$on('mapMeasureMode', ({ mode, radius }) => {
-      this.measureMode = mode
-      this.radius = radius
-    })
   },
   beforeDestroy () {
     this.$bus.$off('mapEditMode')
     this.$bus.$off('removeMarker')
+    this.$bus.$off('searchPets')
   }
 }
 </script>

@@ -8,11 +8,6 @@
 
     <v-tab-item :id="'all'">
       <find-pet-card/>
-      <v-btn @click="toggleMapMeasureMode">Find by radius</v-btn>
-      <v-text-field 
-        v-model="radius"
-        label="Radius"
-      />
     </v-tab-item>
 
     <v-tab-item :id="'lost'">
@@ -32,15 +27,7 @@ import FindPetCard from './FindPetCard'
 
 export default {
   name: 'MenuTabs',
-  components: { AddPetCard, FindPetCard },
-  data: () => ({
-    addLostCardVisible: false
-  }),
-  methods: {
-    toggleMapMeasureMode () {
-      this.$bus.$emit('mapMeasureMode', { mode: true, radius })
-    }
-  }
+  components: { AddPetCard, FindPetCard }
 }
 </script>
 

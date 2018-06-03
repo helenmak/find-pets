@@ -19,7 +19,6 @@
             :items="animals"
             :filter="filter"
             v-model="currentAnimal"
-            :search-input.sync="searchAnimal"
             item-text="type"
             label="Your pet"
             autocomplete
@@ -29,7 +28,6 @@
           <v-select
             :items="breeds[currentAnimal.id]"
             :filter="filter"
-            :search-input.sync="searchBreed"
             v-model="currentBreed"
             label="Breed"
             autocomplete
@@ -167,13 +165,6 @@ export default {
       { name: 'brown', color: 'brown' }
     ]
   }),
-  watch: {
-    searchAnimal (val) {
-      console.log(val)
-    },
-    searchBreed (val) {
-    }
-  },
   methods: {
     filter (itemObj, query, itemText) {
       const hasValue = val => val != null ? val : ''

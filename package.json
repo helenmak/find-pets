@@ -10,8 +10,6 @@
     "build": "node build/build.js"
   },
   "dependencies": {
-    "@turf/distance": "^6.0.1",
-    "@turf/turf": "^5.1.6",
     "mapbox-gl": "^0.45.0",
     "ramda": "^0.25.0",
     "uuidv4": "^1.0.0",
