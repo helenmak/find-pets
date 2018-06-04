@@ -1,8 +1,6 @@
-# SircoSearch v.1.0.0
+# FindPets v.1.0.0
 
-> made with Vue.js and stylus
-
-Current app version doesn`t support 'radius search', but I work on it :).
+Current app version doesn`t support 'radius search', but I am working on it :).
 
 To add new lost or found pet click on corresponding map control.
 Then you have to point place where you lost or found an animal.
