@@ -11,17 +11,17 @@ to find (all, lost or found), fill one or more of criterias and press 'Find'.
 
 Pet data will be saved in your local storage.
 
-## Build Setup
+### Build Setup
 
-# install dependencies
+#### install dependencies
 npm i
 
-# run server at localhost:3000 (will automatically open browser)
+#### run server at localhost:3000 (will automatically open browser)
 npm run dev
 
-# build for production
+#### build for production
 npm run build
 
-# build for production and view the bundle analyzer report
+#### build for production and view the bundle analyzer report
 npm run build --report
 ```
