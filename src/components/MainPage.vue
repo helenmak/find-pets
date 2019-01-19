@@ -9,8 +9,8 @@
       width="350"
       light
       permanent
-      class="deep-purple lighten-5 elevation-5"
-      mini-variant-width="65"
+      class="grey lighten-4 elevation-5"
+      mini-variant-width="80"
     >
 
       <v-list-tile
@@ -27,7 +27,7 @@
         </v-list-tile-content>
       </v-list-tile>
 
-      <menu-tabs/>
+      <menu-tabs :visible="drawer"/>
     </v-navigation-drawer>
 
     <v-content class="layout">

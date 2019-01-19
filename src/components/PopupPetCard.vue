@@ -3,7 +3,7 @@
     <add-pet-card 
       v-if="addMode"
       :id="id"
-      @savePet = "saveNewPet($event)"
+      @savePet="saveNewPet($event)"
     />
     <pet-card 
       v-else
@@ -34,10 +34,10 @@ export default {
       type: Object
     }
   },
-  data: {
+  data: () => ({
     addMode: true,
     pet: null
-  },
+  }),
   methods: {
     ...mapActions(['addPet']),
     saveNewPet (pet) {

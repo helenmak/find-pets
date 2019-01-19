@@ -6,7 +6,7 @@
 import mapboxgl from 'mapbox-gl'
 import PopupPetCard from './PopupPetCard'
 import Vue from 'vue'
-import { mapActions, mapGetters } from 'vuex'
+import { mapGetters } from 'vuex'
 import { clone, omit, mapObjIndexed, filter, whereEq, keys, findIndex, equals, not, prop } from 'ramda'
 import uuidv4 from 'uuidv4'
 
@@ -43,8 +43,6 @@ export default {
       this.map.on('click', (e) => {
         if(this.editMode) {
           this.addMarker(e.lngLat, this.editMode)
-          const newCenter = [e.lngLat.lng + 0.01, e.lngLat.lat - 0.14]
-          this.map.setCenter(newCenter)
           this.editMode = false
           this.$bus.$emit('resetControlBtnText')
         }
@@ -134,7 +132,7 @@ export default {
   top 0
   left 65px
 
-.mapboxgl-popup 
-  max-width: 400px
+.mapboxgl-popup
+  max-width: 500px
   font 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif
 </style>

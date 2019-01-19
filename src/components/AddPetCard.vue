@@ -1,9 +1,8 @@
 <template>
   <v-layout row justify-center>
     <v-card 
-      persistent 
-      max-width="500px" 
-      width="500px"
+      persistent
+      width="600px"
     >
       <v-card>
         <v-card-text>

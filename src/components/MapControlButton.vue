@@ -1,7 +1,7 @@
 <template>
-  <v-btn 
-    outline
-    @click="enterMapEditMode" 
+  <v-btn
+		large
+    @click="enterMapEditMode"
     :class="className"
   >
   {{btnText}}
@@ -12,9 +12,15 @@
 export default {
   name: "MapControlButton",
   props: {
-    text: '',
-    className: '',
-    type: ''
+    text: {
+    	type: String
+		},
+    className: {
+			type: String
+		},
+    type: {
+			type: String
+		}
   },
   data: () => ({
     btnText: ''
@@ -40,9 +46,9 @@ export default {
   border-radius 4px
   position absolute
   z-index 1
-  right 300px
+  right 500px
   margin 8px
-  width 200px
+  width 400px
   font-weight 600
 
 .control-found
@@ -52,7 +58,7 @@ export default {
   top 0
   right 50px
   margin 8px
-  width 200px
+  width 400px
   font-weight 600
 </style>
 

@@ -1,5 +1,5 @@
 <template>
-  <v-tabs grow dark color="cyan">
+  <v-tabs grow dark color="cyan" v-show="visible">
 
     <v-tabs-slider color="yellow" />
     <v-tab href="#all">All</v-tab>
@@ -27,7 +27,12 @@ import FindPetCard from './FindPetCard'
 
 export default {
   name: 'MenuTabs',
-  components: { AddPetCard, FindPetCard }
+  components: { AddPetCard, FindPetCard },
+	props: {
+		visible: {
+			type: Boolean
+		}
+	}
 }
 </script>
 
