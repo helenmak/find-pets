@@ -1,177 +1,156 @@
 <template>
-  <v-layout row justify-center>
-    <v-card 
-      v-model="dialog" 
-      persistent 
-      max-width="500px" 
-      width="500px"
-    >
-      <v-card>
-        <v-card-text>
-          <v-select
-            :items="animals"
-            :filter="filter"
-            v-model="currentAnimal"
-            item-text="type"
-            label="Pet type"
-            clearable
-            autocomplete
-            hide-details
-          />
+	<v-layout justify-center row>
+		<v-card
+			max-width="500px"
+			persistent
+			v-model="dialog"
+			width="500px"
+		>
+			<v-card>
+				<v-card-text>
+					<v-select
+						:filter="filter"
+						:items="animals"
+						autocomplete
+						clearable
+						hide-details
+						item-text="type"
+						label="Pet type"
+						v-model="currentAnimal"
+					/>
 
-          <v-select
-            :items="prop(path(['id'], currentAnimal), breeds)"
-            :filter="filter"
-            v-model="currentBreed"
-            label="Breed"
-            clearable
-            autocomplete
-            hide-details
-          />
+					<v-select
+						:filter="filter"
+						:items="prop(path(['id'], currentAnimal), breeds)"
+						autocomplete
+						clearable
+						hide-details
+						:disabled="not(currentAnimal)"
+						label="Breed"
+						v-model="currentBreed"
+					/>
 
-          <v-text-field
-            label="Age"
-            v-model.number="age"
-            hide-details
-          />
+					<v-text-field
+						hide-details
+						label="Age"
+						v-model.number="age"
+					/>
 
-          <v-select
-            :items="colors"
-            item-text="name"
-            v-model="currentColors"
-            label="Color"
-            clearable
-            multiple
-            chips
-            tags
-            hide-selected
-            hide-details
-          >
-            <template slot="selection" slot-scope="data">
-              <v-chip
-                :selected="data.selected"
-                :key="data.item.name"
-                :color="data.item.name === 'white' ? 'black' : data.item.color"
-                :text-color="data.item.name === 'black' ? 'white' : 'black'"
-                label
-                :outline="data.item.name === 'white'"
-                class="chip--select-multi"
-                @input="data.parent.selectItem(data.item)"
-              >
-                {{data.item.name}}
-              </v-chip>
-            </template>
-            <template slot="item" slot-scope="data">
-              <template>
-                <v-list-tile-content>
-                  <v-chip 
-                    :color="data.item.name === 'white' ? 'black' : data.item.color"
-                    :text-color="data.item.name === 'black' ? 'white' : 'black'"
-                    label
-                    :outline="data.item.name === 'white'"
-                  >{{data.item.name}}</v-chip>
-                </v-list-tile-content>
-              </template>
-            </template>
-          </v-select>
-        </v-card-text>
+					<v-select
+						:items="colors"
+						chips
+						clearable
+						hide-details
+						hide-selected
+						item-text="name"
+						label="Color"
+						multiple
+						tags
+						v-model="currentColors"
+					>
+						<template slot="selection" slot-scope="data">
+							<v-chip
+								:color="data.item.name === 'white' ? 'black' : data.item.color"
+								:key="data.item.name"
+								:outline="data.item.name === 'white'"
+								:selected="data.selected"
+								:text-color="data.item.name === 'black' ? 'white' : 'black'"
+								@input="data.parent.selectItem(data.item)"
+								class="chip--select-multi"
+								label
+							>
+								{{data.item.name}}
+							</v-chip>
+						</template>
+						<template slot="item" slot-scope="data">
+							<template>
+								<v-list-tile-content>
+									<v-chip
+										:color="data.item.name === 'white' ? 'black' : data.item.color"
+										:outline="data.item.name === 'white'"
+										:text-color="data.item.name === 'black' ? 'white' : 'black'"
+										label
+									>{{data.item.name}}
+									</v-chip>
+								</v-list-tile-content>
+							</template>
+						</template>
+					</v-select>
+				</v-card-text>
 
-        <v-card-actions>
-          <v-spacer />
-          <v-btn color="blue darken-1" flat @click.native="resetFilters">Reset filters</v-btn>
-          <v-btn color="blue darken-1" flat @click.native="findPets">Find</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-card>
-  </v-layout>
+				<v-card-actions>
+					<v-spacer/>
+					<v-btn @click.native="resetFilters" color="blue darken-1" flat>Reset filters</v-btn>
+					<v-btn @click.native="findPets" color="blue darken-1" flat>Find</v-btn>
+				</v-card-actions>
+			</v-card>
+		</v-card>
+	</v-layout>
 </template>
 
 <script>
-import ImagePreview from './ImagePreview'
-import { filter, not, or, isNil, isEmpty, path, prop } from 'ramda'
+	import ImagePreview from './ImagePreview'
+	import {filter, not, or, isNil, isEmpty, path, prop, toLower, gt} from 'ramda'
 
-export default {
-  name: "FindPetCard",
-  components: { ImagePreview },
-  props: {
-    id: '',
-    type: ''
-  },
-  data: () => ({
-    dialog: false,
-    currentAnimal: '',
-    currentBreed: '',
-    contacts: '',
-    age: '',
-    currentColors: [],
-    photoUrl: '',
-    animals: [
-      { type: 'Dog', id: 'dog' },
-      { type: 'Cat', id: 'cat' },
-      { type: 'Parrot', id: 'parrot' },
-      { type: 'Rabbit', id: 'rabbit' },
-      { type: 'Snake', id: 'snake' },
-      { type: 'Fish', id: 'fish' },
-      { type: 'Monkey', id: 'monkey' },
-      { type: 'Pig', id: 'pig' },
-      { type: 'Hamster', id: 'hamster' },
-      { type: 'Rat', id: 'rat' }
-    ],
-    breeds: {
-      dog: ['Afghan Hound', 'Spaniel', 'Bulldog', 'Cocker Spaniel', 'Collie', 'Boxer', 'Cesky Terrier', 'Chihuahua', 'Dalmatian', 'Greyhound', 'Rottweiler'],
-      cat: ['Asian', 'Bengal', 'Donskoy', 'Highlander', 'Lykoi', 'Nebelung', 'Sphynx', 'Siamese', 'Ukrainian Levkoy', 'Russian Blue'],
-      parrot: ['Amazon', 'Lovebirds', 'King', 'Tiger', 'Pygmy'],
-      rabbit: ['American', 'Alaska', 'Angora', 'Beige', 'Belgian', 'Californian', 'Cashmere Lop', 'Czech Red', 'Dalmatian', 'Dwarf Hotot', 'Japanese White', 'Jersey Wooly', 'Lionhead', 'Satin', 'Tan'],
-      snake: ['Black Mamba', 'Burmese Python', 'Green Tree Python', 'Green Anaconda', 'King Cobra'],
-      fish: ['Giant grouper', 'Red lionfish', 'Goldfish', 'Barbs', 'Danios', 'Catfish', 'Hatchets', 'Livebearing Fish', 'Loaches', 'Rainbowfish'],
-      monkey: ['Spider', 'Squirrel', 'Vervet', 'Proboscis', 'Pygmy Marmoset', 'Common Marmoset', 'Gibbon', 'Capuchin Monkey'],
-      pig: ['American Yorkshire', 'Danish Protest', 'Göttingen minipig', 'Red Wattle', 'Tamworth', 'Wessex Saddleback'],
-      hamster: ['Syrian', 'Dwarf Campbell Russian', 'Dwarf Winter White Russian', 'Roborovski Dwarf', 'Chinese'],
-      rat: ['Standard', 'Manx', 'Bald', 'Dumbo', 'Rex']
-    },
-    colors: [
-      { name: 'black', color: 'black' },
-      { name: 'red', color: 'red' },
-      { name: 'white', color: 'white' },
-      { name: 'grey', color: 'grey' },
-      { name: 'blue', color: 'blue' },
-      { name: 'yellow', color: 'yellow' },
-      { name: 'lightblue', color: '#add8e6' },
-      { name: 'green', color: 'green' },
-      { name: 'pink', color: 'pink' },
-      { name: 'orange', color: 'orange' },
-      { name: 'brown', color: 'brown' }
-    ]
-  }),
-  methods: {
-    path,
-    prop,
-    filter (itemObj, query, itemText) {
-      const hasValue = val => val != null ? val : ''
-      const text = hasValue(itemText)
-      const queryText = hasValue(query)
-      const format = item => item.toString().toLowerCase()
-      return format(text).indexOf(format(queryText)) > -1
-    },
-    resetFilters () {
-      this.currentAnimal = ''
-      this.currentBreed = ''
-      this.age = ''
-      this.colors = []
-    },
-    findPets () {
-      const colors = this.currentColors.map(color => color.name)
-      const animal = path(['type'], this.currentAnimal)
-      const searchFields = {
-        animal,
-        breed: this.currentBreed,
-        age: this.age,
-        colors,
-        status: this.type
-      }
-      const searchQuery = filter(search => not(or(isNil(search), isEmpty(search))), searchFields)
-      this.$bus.$emit('searchPets', searchQuery)
-    }
-  }
-}
+	import animals from '../data/animals'
+	import breeds from '../data/breeds'
+	import colors from '../data/colors'
+
+	export default {
+		name: 'FindPetCard',
+		components: {ImagePreview},
+		props: {
+			id: '',
+			type: ''
+		},
+		data: () => ({
+			dialog: false,
+			currentAnimal: null,
+			currentBreed: null,
+			contacts: null,
+			age: null,
+			currentColors: [],
+			photoUrl: null,
+			animals,
+			breeds,
+			colors
+		}),
+		watch: {
+			currentAnimal() {
+				this.currentBreed = null
+				this.age = null
+				this.currentColors = []
+			}
+		},
+		methods: {
+			path,
+			prop,
+			not,
+			filter(itemObj, queryText = '', itemText = '') {
+				const getString = val => val || ''
+				const text = getString(itemText)
+				const query = getString(queryText)
+				return gt(toLower(text).indexOf(toLower(query)), -1)
+			},
+			resetFilters() {
+				this.currentAnimal = null
+				this.currentBreed = null
+				this.age = null
+				this.currentColors = []
+			},
+			findPets() {
+				const colors = this.currentColors.map(color => color.name)
+				const animal = path(['type'], this.currentAnimal)
+				const searchFields = {
+					animal,
+					breed: this.currentBreed,
+					age: this.age,
+					colors,
+					status: this.type
+				}
+				const searchQuery = filter(search => not(or(isNil(search), isEmpty(search))), searchFields)
+				this.$bus.$emit('searchPets', searchQuery)
+			}
+		}
+	}
 </script>
