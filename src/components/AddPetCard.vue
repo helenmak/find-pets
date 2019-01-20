@@ -3,6 +3,7 @@
     <v-card 
       persistent
       width="600px"
+			class="grey lighten-4"
     >
       <v-card>
         <v-card-text>

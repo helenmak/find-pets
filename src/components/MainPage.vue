@@ -2,14 +2,14 @@
   <div class="main__wrapper">
     <v-navigation-drawer
       clipped
+			fixed
+			light
+			permanent
+			class="grey lighten-4 elevation-5"
+			width="350"
       disable-route-watcher
-      :mini-variant="!drawer"
-      fixed
       value="drawer"
-      width="350"
-      light
-      permanent
-      class="grey lighten-4 elevation-5"
+			:mini-variant="!drawer"
       mini-variant-width="80"
     >
 
@@ -22,9 +22,6 @@
             <v-icon color="blue-grey">swap_horiz</v-icon>
           </v-btn>
         </v-list-tile-action>
-        <v-list-tile-content v-if="drawer">
-          <v-list-tile-title>Hide sidebar</v-list-tile-title>
-        </v-list-tile-content>
       </v-list-tile>
 
       <menu-tabs :visible="drawer"/>
