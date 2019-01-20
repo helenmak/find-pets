@@ -1,7 +1,7 @@
 {
-  "name": "sirko_search",
+  "name": "find_pet",
   "version": "1.0.0",
-  "description": "SirkoSearch",
+  "description": "FindPet",
   "author": "",
   "private": true,
   "scripts": {

@@ -1,7 +1,7 @@
 <template>
   <v-btn
 		large
-    @click="enterMapEditMode"
+    @click="toggleMapEditMode"
     :class="className"
   >
   {{btnText}}
@@ -9,6 +9,8 @@
 </template>
 
 <script>
+import { not, equals, and } from 'ramda'
+
 export default {
   name: "MapControlButton",
   props: {
@@ -23,17 +25,32 @@ export default {
 		}
   },
   data: () => ({
-    btnText: ''
+    btnText: '',
+		editMode: false
   }),
   methods: {
-    enterMapEditMode () {
-      this.btnText = 'Now choose place'
-      this.$bus.$emit('mapEditMode', this.type)
+  	toggleButtonEditMode () {
+			this.editMode = not(this.editMode)
+			this.btnText = this.editMode ? 'Cancel' : this.text
+		},
+		restoreButtonEditMode () {
+			this.editMode = false
+			this.btnText = this.text
+		},
+		toggleMapEditMode () {
+      this.toggleButtonEditMode()
+			const mapEditMode = this.editMode ? this.type : false
+      this.$bus.$emit('mapEditMode', mapEditMode)
     }
   },
   mounted () {
     this.btnText = this.text
-    this.$bus.$on('resetControlBtnText', () => this.btnText = this.text)
+    this.$bus.$on('resetControlBtnText', this.restoreButtonEditMode)
+		this.$bus.$on('mapEditMode', mapEditMode => {
+			const notCurrentButtonMode = not(equals(mapEditMode, this.type))
+			const mapEnterOtherMode = and(this.editMode, notCurrentButtonMode)
+			if (mapEnterOtherMode) this.toggleButtonEditMode()
+		})
   },
   beforeDestroy () {
     this.$bus.$off('resetControlBtnText')

@@ -33,8 +33,16 @@
     <v-content class="layout">
         <v-layout justify-center align-center fill-height>
           <v-flex fill-height>
-            <map-control-button text="Add lost pet" className="control-lost" type="lost"/>
-            <map-control-button text="Add found pet" className="control-found" type="found"/>
+            <map-control-button
+							text="Add lost pet"
+							className="control-lost"
+							type="lost"
+						/>
+            <map-control-button
+							text="Add found pet"
+							className="control-found"
+							type="found"
+						/>
             <router-view />
           </v-flex>
         </v-layout>

@@ -30,9 +30,9 @@ export default {
         zoom: 9.61,
         style: 'mapbox://styles/mapbox/streets-v10?optimize=true'
       })
-      let el = document.createElement('div')
-      el.className = 'marker'
-      new mapboxgl.Marker(el)
+      let markerElem = document.createElement('div')
+			markerElem.className = 'marker'
+      new mapboxgl.Marker(markerElem)
         .setLngLat([30.58071739532045, 50.4471283915895])
         .addTo(this.map)
     },
